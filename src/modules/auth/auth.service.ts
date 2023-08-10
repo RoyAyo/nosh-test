@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AuthHelper from '../../helpers/auth.helper'
 import User from '../users/user.model'
-import { ITokens } from './@types'
+import { ILoginPayload, ISignupPayload, ITokens } from './@types'
 import Cache from '../../config/cache'
 
 class AuthenticationService {
-  async signUserUpAndReturnToken(payload: any): Promise<ITokens> {
+  async signUserUpAndReturnToken(payload: ISignupPayload): Promise<ITokens> {
     const hashedPassword = AuthHelper.passwordToHash(payload.password)
     const newUser = new User({
       name: payload.name,
@@ -29,7 +29,7 @@ class AuthenticationService {
     }
   }
 
-  async logUserInAndReturnToken(payload: any): Promise<ITokens> {
+  async logUserInAndReturnToken(payload: ILoginPayload): Promise<ITokens> {
     const { email, password } = payload
     const user = await User.findOne({ email }).select('+password')
     if (!user) throw new Error('Invalid Email Provided')

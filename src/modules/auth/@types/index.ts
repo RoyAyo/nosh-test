@@ -10,3 +10,14 @@ export interface ITokens {
   token: string
   refreshToken: string
 }
+
+export interface ISignupPayload {
+  email: string
+  name: string
+  password: string
+}
+
+export interface ILoginPayload {
+  email: string
+  password: string
+}
