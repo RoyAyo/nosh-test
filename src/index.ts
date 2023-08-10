@@ -3,30 +3,43 @@ import cors from 'cors'
 import cookie from 'cookie-parser'
 import helmet from 'helmet'
 import dotenv from 'dotenv'
+import rateLimit from 'express-rate-limit'
+
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, 
+	max: 100,
+	standardHeaders: true,
+	legacyHeaders: false,
+})
 
 // configurations
 dotenv.config()
 import './config/database'
-// import './config/redis'
+import './config/cache'
 import AppRoutes from './utils/app.route'
+import { handleError } from './utils/errorHandler'
 
 // Boot express
 const app: Application = express()
 const port = process.env.PORT || 3000
-const base: string = process.env.base_url ?? '/api/v1'
+const baseV1: string = process.env.base_url ?? '/api/v1'
 
 // middlewares
+app.use(limiter)
 app.use(cors())
 app.use(helmet())
 app.use(cookie())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-// Application routing
+// Application routing and versioning
 app.get('/', (req: Request, res: Response) => {
-  res.status(200).send({ data: 'Nosh HEALTH CHECK, OK!!' })
+	res.status(200).send({ data: 'Nosh HEALTH CHECK, OK!!' })
 })
-app.use(base, AppRoutes)
+// version 1
+app.use(baseV1, AppRoutes)
+
+app.use(handleError)
 
 // Start server
 app.listen(port, () => console.log(`Server is listening on port ${port}!`))

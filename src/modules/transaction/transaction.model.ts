@@ -1,10 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
-
-interface ITransaction extends Document {
-  senderId: string
-  amount: number
-  recipientId: string
-}
+import { ITransaction } from './@types'
 
 const TransactionSchema = new Schema<ITransaction>(
   {
@@ -15,6 +10,10 @@ const TransactionSchema = new Schema<ITransaction>(
     recipientId: {
       type: String,
     },
+    status: {
+      type: String,
+      default: 'Pending'
+    }
   },
   {
     timestamps: true,

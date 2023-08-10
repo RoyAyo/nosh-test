@@ -26,6 +26,7 @@ const UserSchema = new Schema<IUser>(
       default: 0,
       min: 0,
     },
+    roles: Array<string>
   },
   {
     timestamps: true,

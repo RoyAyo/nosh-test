@@ -1,12 +1,7 @@
-import { startSession } from 'mongoose'
-import { userDTO } from '../users/@types'
 import User from '../users/user.model'
-
-interface ITransfer {
-  user: userDTO
-  amount: number
-  recipientId: string
-}
+import { ITransfer } from './@types'
+import { updateTransferDetails } from '../../config/queue'
+import Transaction from './transaction.model'
 
 class TransactionService {
   async initiateTransfer(payload: ITransfer) {
@@ -21,22 +16,13 @@ class TransactionService {
       throw new Error('Account balance is insufficient')
     }
 
-    const session = await startSession()
-    session.startTransaction()
-    try {
-      await User.findByIdAndUpdate(payload.user._id, {
-        $inc: { balance: -payload.amount },
-      })
-      await User.findByIdAndUpdate(recipient._id, {
-        $inc: { balance: payload.amount },
-      })
-      session.commitTransaction()
-    } catch (error) {
-      console.error(error)
-      session.abortTransaction()
-    } finally {
-      session.endSession()
-    }
+    const transaction = await (new Transaction({
+      senderId: payload.user._id,
+      recipientId: recipient?._id,
+      amount: payload.amount,
+    })).save();
+
+    updateTransferDetails.add({ payload, recipient, transactionId: transaction.id })
   }
 }
 

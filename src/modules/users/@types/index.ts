@@ -6,11 +6,13 @@ export interface userDTO {
   name?: string
   password: string
   balance: number
+  roles: Array<string>
 }
 
 export interface IUserDocument extends Document {
   email: string
   name?: string
   password: string
-  balance: number
+  balance: number,
+  roles: Array<string>
 }

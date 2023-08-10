@@ -27,7 +27,7 @@ export const authMiddleware = async (
     if (user) {
       req.body.user = JSON.parse(user)
     } else {
-      const user = await userModel.findById(_id)
+      const user = await userModel.findById(_id).lean()
       if (!user) throw new Error('Invalid token provided')
       req.body.user = user
     }

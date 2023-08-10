@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
@@ -20,7 +19,7 @@ class AuthHelper {
   }
 
   static generateTokenFromPayload(
-    payload: any,
+    payload: { [key: string]: string },
     isRefresh: boolean = false,
   ): string {
     const salt = isRefresh
