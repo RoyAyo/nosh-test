@@ -9,6 +9,7 @@ const router = express.Router()
 
 router.use(authMiddleware);
 
-router.post('/transfer', authorizeMiddleware('Transfer'), transactionController.initiateTransfer)
+// this will accept as many roles
+router.post('/transfer', authorizeMiddleware('TransferUser'), transactionController.initiateTransfer)
 
 export default router
